@@ -3,8 +3,13 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 
 public class GameOfLifePanel extends JPanel {
-	private final GameOfLife gameOfLife;
+	private GameOfLife gameOfLife;
+	private boolean edit=false;
+	private int edit_x=0,edit_y=0;
 	public GameOfLifePanel(GameOfLife gol){
+		this.gameOfLife=gol;
+	}
+	public void setGameOfLife(GameOfLife gol){
 		this.gameOfLife=gol;
 	}
 	public void paint(Graphics g){
@@ -28,9 +33,14 @@ public class GameOfLifePanel extends JPanel {
 						g2d.setColor(new Color(27, 74, 134));
 					}
 				}else{
-					g2d.setColor(new Color(11, 28, 49));
+					if(edit && (w==edit_x && h==edit_y)) {
+						g2d.setColor(Color.RED);
+					}else{
+						g2d.setColor(new Color(11, 28, 49));
+					}
 				}
 				g2d.fillRect((int) (w*wx), (int) (h*hx), (int) wx, (int) hx);
+				//if an dot is bigger than 2x2 px, draw a rect around it
 				if(wx>2 && hx>2){
 					g2d.setColor(new Color(9, 26, 45));
 					g2d.drawRect((int) (w*wx), (int) (h*hx), (int) wx, (int) hx);
@@ -41,6 +51,18 @@ public class GameOfLifePanel extends JPanel {
 		//img = transposedHBlur(img);
 		//img = transposedHBlur(img);
 		g.drawImage(img,0,0,this);
+	}
+	public void setEdit(boolean edit){
+		this.edit=edit;
+	}
+	public void setEdit(int edit_x,int edit_y){
+		double wx=this.getWidth()/(double)this.gameOfLife.getWidth();
+		double hx=this.getHeight()/(double)this.gameOfLife.getHeight();
+		this.edit_x=(int)(edit_x/wx);
+		this.edit_y=(int)(edit_y/hx);
+	}
+	public void changeEdit(){
+		this.gameOfLife.getGrid()[this.edit_x][edit_y]=!this.gameOfLife.getGrid()[this.edit_x][edit_y];
 	}
 	private BufferedImage transposedHBlur(BufferedImage im) {
 		int height = im.getHeight();
